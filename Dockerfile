@@ -1,4 +1,4 @@
-FROM openjdk:8-jre-alpine
+FROM maven:alpine
 MAINTAINER Swire Chen <idoop@msn.cn>
 
 ENV VERSION=1.1.0 \
