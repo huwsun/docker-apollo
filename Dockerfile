@@ -13,6 +13,5 @@ COPY docker-entrypoint /usr/local/bin/docker-entrypoint
 RUN chmod +x           /usr/local/bin/docker-entrypoint
 
 EXPOSE 8070 8080 8081 8082 8083 8090 8091 8092 8093
-# EXPOSE 80-60000
 
 ENTRYPOINT ["docker-entrypoint"]
