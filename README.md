@@ -10,7 +10,7 @@
 
 ## Docker Tags: 
 
-- `1.0.0` `latest`
+- `1.1.0` `latest`
 - `0.11.0` 
 - `0.10.2`
 
@@ -21,7 +21,7 @@ version: '2'
 services:
   apollo:
     image: idoop/docker-apollo:latest
-    # 目前只能用host模式,否则将出现504错误,如果想改端口,参考下方修改端口的环境变量
+    # 经过测试，网络托管模式也可以正常使用
     network_mode: "host"
     # 如果需要查看日志,挂载容器中的/opt路径出来即可.
     # volumes:
@@ -41,7 +41,7 @@ services:
       FAT_DB: jdbc:mysql://192.168.1.28:3306/ApolloConfigDBFat?characterEncoding=utf8
       FAT_DB_USER: root
       FAT_DB_PWD: toor
-      # 可修改端口.
+      # 可修改端口.需要一并修改Dockerfile的expose端口，两边要保持一致
       FAT_CONFIG_PORT: 8050
       FAT_ADMIN_PORT: 8051
            
