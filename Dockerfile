@@ -2,7 +2,7 @@ FROM maven:alpine
 MAINTAINER Swire Chen <idoop@msn.cn>
 
 ENV VERSION=1.1.0 \
-    PORTAL_PORT=8070
+    PORTAL_PORT=8170
 
 ADD apollo-adminservice-${VERSION}-github.zip /apollo-adminservice-${VERSION}-github.zip
 ADD apollo-configservice-${VERSION}-github.zip /apollo-configservice-${VERSION}-github.zip
@@ -12,6 +12,6 @@ RUN mkdir /apollo-admin/dev /apollo-admin/fat /apollo-admin/uat /apollo-admin/pr
 COPY docker-entrypoint /usr/local/bin/docker-entrypoint
 RUN chmod +x           /usr/local/bin/docker-entrypoint
 
-EXPOSE 8070 8080 8081 8082 8083 8090 8091 8092 8093
+EXPOSE 8170 8180 8181 8182 8183 8190 8191 8192 8193
 
 ENTRYPOINT ["docker-entrypoint"]

@@ -16,6 +16,7 @@ if [ "$#" == "0" ];then
     if [[ -n "${PORTAL_PORT}" ]];then
       sed -i -e "s/^SERVER_PORT=.*$/SERVER_PORT=${PORTAL_PORT}/" /apollo-portal/scripts/startup.sh
     fi
+    sed -i -e "s/^printf \"Waiting for server startup\"$/printf \"Waiting for \$SERVICE_NAME server startup \\nJAVA_OPTS=\$JAVA_OPTS\" \\n /" /apollo-portal/scripts/startup.sh
   fi
   
 # dev
@@ -50,6 +51,8 @@ if [ "$#" == "0" ];then
       sed -i -r "/-Ddev_meta=.*$/d" /apollo-portal/scripts/startup.sh
       sed -i -e "/^SERVER_PORT=.*$/a\export JAVA_OPTS=\"\$JAVA_OPTS -Ddev_meta=http://localhost:${DEV_CONFIG_PORT}/\"" /apollo-portal/scripts/startup.sh
     fi
+    sed -i -e "s/^printf \"Waiting for server startup\"$/printf \"Waiting for \$SERVICE_NAME server startup \\nJAVA_OPTS=\$JAVA_OPTS\" \\n /" /apollo-config/dev/scripts/startup.sh
+    sed -i -e "s/^printf \"Waiting for server startup\"$/printf \"Waiting for \$SERVICE_NAME server startup \\nJAVA_OPTS=\$JAVA_OPTS\" \\n /" /apollo-admin/dev/scripts/startup.sh
     /apollo-config/dev/scripts/startup.sh
     /apollo-admin/dev/scripts/startup.sh
   fi
@@ -86,6 +89,8 @@ if [ "$#" == "0" ];then
       sed -i -r "/-Dfat_meta=.*$/d" /apollo-portal/scripts/startup.sh
       sed -i -e "/^SERVER_PORT=.*$/a\export JAVA_OPTS=\"\$JAVA_OPTS -Dfat_meta=http://localhost:${FAT_CONFIG_PORT}/\"" /apollo-portal/scripts/startup.sh
     fi
+    sed -i -e "s/^printf \"Waiting for server startup\"$/printf \"Waiting for \$SERVICE_NAME server startup \\nJAVA_OPTS=\$JAVA_OPTS\" \\n /" /apollo-config/fat/scripts/startup.sh
+    sed -i -e "s/^printf \"Waiting for server startup\"$/printf \"Waiting for \$SERVICE_NAME server startup \\nJAVA_OPTS=\$JAVA_OPTS\" \\n /" /apollo-admin/fat/scripts/startup.sh
     /apollo-config/fat/scripts/startup.sh
     /apollo-admin/fat/scripts/startup.sh 
   fi
@@ -122,6 +127,8 @@ if [ "$#" == "0" ];then
       sed -i -r "/-Duat_meta=.*$/d" /apollo-portal/scripts/startup.sh
       sed -i -e "/^SERVER_PORT=.*$/a\export JAVA_OPTS=\"\$JAVA_OPTS -Duat_meta=http://localhost:${UAT_CONFIG_PORT}/\"" /apollo-portal/scripts/startup.sh
     fi
+    sed -i -e "s/^printf \"Waiting for server startup\"$/printf \"Waiting for server \$SERVICE_NAME startup \\nJAVA_OPTS=\$JAVA_OPTS\" \\n /" /apollo-config/uat/scripts/startup.sh
+    sed -i -e "s/^printf \"Waiting for server startup\"$/printf \"Waiting for server \$SERVICE_NAME startup \\nJAVA_OPTS=\$JAVA_OPTS\" \\n /" /apollo-admin/uat/scripts/startup.sh
     /apollo-config/uat/scripts/startup.sh
     /apollo-admin/uat/scripts/startup.sh 
   fi
@@ -157,6 +164,8 @@ if [ "$#" == "0" ];then
       sed -i -r "/-Dpro_meta=.*$/d" /apollo-portal/scripts/startup.sh
       sed -i -e "/^SERVER_PORT=.*$/a\export JAVA_OPTS=\"\$JAVA_OPTS -Dpro_meta=http://localhost:${PRO_CONFIG_PORT}/\"" /apollo-portal/scripts/startup.sh
     fi
+    sed -i -e "s/^printf \"Waiting for server startup\"$/printf \"Waiting for \$SERVICE_NAME server startup \\nJAVA_OPTS=\$JAVA_OPTS\" \\n /" /apollo-config/pro/scripts/startup.sh
+    sed -i -e "s/^printf \"Waiting for server startup\"$/printf \"Waiting for \$SERVICE_NAME server startup \\nJAVA_OPTS=\$JAVA_OPTS\" \\n /" /apollo-admin/pro/scripts/startup.sh
     /apollo-config/pro/scripts/startup.sh
     /apollo-admin/pro/scripts/startup.sh 
   fi
