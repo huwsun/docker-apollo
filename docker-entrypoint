@@ -1,58 +1,59 @@
 #!/bin/bash
 set -e
-if [ "$#" == "0" ];then
-  URL=
-  DB=
-  DB_USER=
-  DB_PWD=
-  IP=
-  PORT=
+set -x
+URL=
+DB=
+DB_USER=
+DB_PWD=
+IP=
+PORT=
 
-  function setStartup {
-    ENV_STR=$1
-    SERVER_TYPE=$2
-    echo $*
-    echo $PORT
-    if [[ -n "${URL}" && $SERVER_TYPE == "config" ]];then
-      sed -i -r "/-D"$ENV_STR"_meta=.*$/d" /apollo-portal/scripts/startup.sh
-      sed -i -e "/^SERVER_PORT=.*$/a\export JAVA_OPTS=\"\$JAVA_OPTS -D"$ENV_STR"_meta=${URL}/\"" /apollo-portal/scripts/startup.sh
-    
-    elif [[ -n "${DB}" ]];then
-      if [[ $SERVER_TYPE == "portal" ]];then 
-        SERVER_DIR="/apollo-"$SERVER_TYPE
-        START_SCRIPT=$SERVER_DIR"/scripts/startup.sh"
-        SERVER_FILE="/apollo-"$SERVER_TYPE"-${VERSION}-github.zip" 
-      else
-        SERVER_DIR="/apollo-"$SERVER_TYPE"/"$ENV_STR
-        START_SCRIPT=$SERVER_DIR"/scripts/startup.sh"
-        SERVER_FILE="/apollo-"$SERVER_TYPE"service-${VERSION}-github.zip"
-      fi
-      rm -rf $SERVER_DIR"/*"
-      unzip -o $SERVER_FILE -d $SERVER_DIR
-      sed -i -e "/^SERVER_PORT=.*$/a\export JAVA_OPTS=\"\$JAVA_OPTS -Dspring.datasource.url=${DB} \"" $START_SCRIPT
-      if [[ -n "${DB_USER}" ]];then
-        sed -i -e "/^SERVER_PORT=.*$/a\export JAVA_OPTS=\"\$JAVA_OPTS -Dspring.datasource.username=${DB_USER} \"" $START_SCRIPT
-      fi
-      if [[ -n "${DB_PWD}" ]];then
-        sed -i -e "/^SERVER_PORT=.*$/a\export JAVA_OPTS=\"\$JAVA_OPTS -Dspring.datasource.password=${DB_PWD} \"" $START_SCRIPT
-      fi
-      if [[ -n "${IP}" ]];then
-        sed -i -e "/^SERVER_PORT=.*$/a\export JAVA_OPTS=\"\$JAVA_OPTS -Deureka.instance.ip-address=${IP} \"" $START_SCRIPT
-      fi
-      if [[ -n "${PORT}" ]];then
-        sed -i -e "s/^SERVER_PORT=.*$/SERVER_PORT=${PORT}/" $START_SCRIPT
-      fi
-      if [[ -n "${PORT}" && -n "${PORTAL_DB}" && $SERVER_TYPE == "config" ]];then
-         sed -i -r "/-D"$ENV_STR"_meta=.*$/d" /apollo-portal/scripts/startup.sh
-         sed -i -e "/^SERVER_PORT=.*$/a\export JAVA_OPTS=\"\$JAVA_OPTS -D"$ENV_STR"_meta=http://localhost:${PORT}/\"" /apollo-portal/scripts/startup.sh
-      fi
-      sed -i -e "s/^printf \"Waiting for server startup\"$/printf \"Waiting for \$SERVICE_NAME server startup \\nJAVA_OPTS=\$JAVA_OPTS\" \\n /" $START_SCRIPT
-      if [[ ! $SERVER_TYPE == "portal" ]];then 
-        $START_SCRIPT
-      fi
+function setStartup {
+  ENV_STR=$1
+  SERVER_TYPE=$2
+  echo $*
+  echo $PORT
+  if [[ -n "${URL}" && $SERVER_TYPE == "config" ]];then
+    sed -i -r "/-D"$ENV_STR"_meta=.*$/d" /apollo-portal/scripts/startup.sh
+    sed -i -e "/^SERVER_PORT=.*$/a\export JAVA_OPTS=\"\$JAVA_OPTS -D"$ENV_STR"_meta=${URL}/\"" /apollo-portal/scripts/startup.sh
+  
+  elif [[ -n "${DB}" ]];then
+    if [[ $SERVER_TYPE == "portal" ]];then 
+      SERVER_DIR="/apollo-"$SERVER_TYPE
+      START_SCRIPT=$SERVER_DIR"/scripts/startup.sh"
+      SERVER_FILE="/apollo-"$SERVER_TYPE"-${VERSION}-github.zip" 
+    else
+      SERVER_DIR="/apollo-"$SERVER_TYPE"/"$ENV_STR
+      START_SCRIPT=$SERVER_DIR"/scripts/startup.sh"
+      SERVER_FILE="/apollo-"$SERVER_TYPE"service-${VERSION}-github.zip"
     fi
-  }
+    rm -rf $SERVER_DIR"/*"
+    unzip -o $SERVER_FILE -d $SERVER_DIR
+    sed -i -e "/^SERVER_PORT=.*$/a\export JAVA_OPTS=\"\$JAVA_OPTS -Dspring.datasource.url=${DB} \"" $START_SCRIPT
+    if [[ -n "${DB_USER}" ]];then
+      sed -i -e "/^SERVER_PORT=.*$/a\export JAVA_OPTS=\"\$JAVA_OPTS -Dspring.datasource.username=${DB_USER} \"" $START_SCRIPT
+    fi
+    if [[ -n "${DB_PWD}" ]];then
+      sed -i -e "/^SERVER_PORT=.*$/a\export JAVA_OPTS=\"\$JAVA_OPTS -Dspring.datasource.password=${DB_PWD} \"" $START_SCRIPT
+    fi
+    if [[ -n "${IP}" ]];then
+      sed -i -e "/^SERVER_PORT=.*$/a\export JAVA_OPTS=\"\$JAVA_OPTS -Deureka.instance.ip-address=${IP} \"" $START_SCRIPT
+    fi
+    if [[ -n "${PORT}" ]];then
+      sed -i -e "s/^SERVER_PORT=.*$/SERVER_PORT=${PORT}/" $START_SCRIPT
+    fi
+    if [[ -n "${PORT}" && -n "${PORTAL_DB}" && $SERVER_TYPE == "config" ]];then
+        sed -i -r "/-D"$ENV_STR"_meta=.*$/d" /apollo-portal/scripts/startup.sh
+        sed -i -e "/^SERVER_PORT=.*$/a\export JAVA_OPTS=\"\$JAVA_OPTS -D"$ENV_STR"_meta=http://localhost:${PORT}/\"" /apollo-portal/scripts/startup.sh
+    fi
+    sed -i -e "s/^printf \"Waiting for server startup\"$/printf \"Waiting for \$SERVICE_NAME server startup \\nJAVA_OPTS=\$JAVA_OPTS\" \\n /" $START_SCRIPT
+    if [[ ! $SERVER_TYPE == "portal" ]];then 
+      $START_SCRIPT
+    fi
+  fi
+}
 
+if [ "$#" == "0" ];then
 # portal config
   if [[ -n "${PORTAL_DB}" ]];then
     DB=$PORTAL_DB
@@ -119,7 +120,14 @@ if [ "$#" == "0" ];then
     /apollo-portal/scripts/startup.sh
   fi
 
-  tail -f /dev/null
+  # healthcheck
+  loop=1
+  while [ ${loop} -eq 1 ]
+  do
+      /usr/local/bin/healthcheck.sh || exit 1
+      sleep 300
+  done
+    
 else
   exec "$@"
 fi
