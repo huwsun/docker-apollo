@@ -1,7 +1,7 @@
 FROM maven:alpine
 MAINTAINER huwsun <huwsun@gmail.com>
 
-ENV VERSION=1.3.0 \
+ENV VERSION=1.4.0 \
     PORTAL_PORT=8170
 
 #ADD apollo-adminservice-${VERSION}-github.zip /apollo-adminservice-${VERSION}-github.zip
