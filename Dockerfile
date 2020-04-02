@@ -1,7 +1,7 @@
 FROM maven:alpine
 MAINTAINER huwsun <huwsun@gmail.com>
 
-ENV VERSION=1.4.0 \
+ENV VERSION=1.6.1 \
     PORTAL_PORT=8170
 
 #ADD apollo-adminservice-${VERSION}-github.zip /apollo-adminservice-${VERSION}-github.zip
@@ -18,7 +18,5 @@ RUN wget https://github.com/ctripcorp/apollo/releases/download/v${VERSION}/apoll
     chmod +x /usr/local/bin/docker-entrypoint /usr/local/bin/healthcheck
 
 HEALTHCHECK --interval=5m --timeout=3s CMD bash /usr/local/bin/healthcheck
-
-EXPOSE 8170 8180 8181 8182 8183 8190 8191 8192 8193
 
 ENTRYPOINT ["docker-entrypoint"]

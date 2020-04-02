@@ -119,3 +119,8 @@ Pro:
 > - PRO_DB_PWD: 数据库密码
 > - PRO_ADMIN_PORT: admin服务端口,默认8093.若网络模式为host,可指定更改.
 > - PRO_CONFIG_PORT: config服务端口,默认8083.若网络模式为host,可指定更改,需要与本数据库中的ServerConfig中eureka.service.url端口相同.
+
+## arm 支持
+```
+docker buildx build -t registry.cn-hangzhou.aliyuncs.com/ecf/apollo:1.6.1-arm --platform=linux/arm64 . --push
+```
